@@ -18,19 +18,14 @@ cat create_fam.R | R --vanilla --args $cohort $fam $pheno
 cat create_cov.R | R --vanilla --args $cohort
 
 #Create dosage file and run PLINK per chromosome
-chr=2
-python convert_to_plink_dosage.py \
+for chr in {1..22..1}
+do
+     python convert_to_plink_dosage.py \
        ${dose_dir}/chr${chr}.dose.vcf.gz \
        ../data/input/${cohort}/chr${chr}.dosage
-plink --dosage ../data/input/${cohort}/chr${chr}.dosage noheader format=1 \
+
+     plink --dosage ../data/input/${cohort}/chr${chr}.dosage noheader format=1 \
       --covar ../data/input/${cohort}/cov.txt \
       --fam ../data/input/${cohort}/fam.fam --allow-no-sex \
       --out ../data/output/${cohort}/chr${chr}
-chr=9
-python convert_to_plink_dosage.py \
-       ${dose_dir}/chr${chr}.dose.vcf.gz \
-       ../data/input/${cohort}/chr${chr}.dosage
-plink --dosage ../data/input/${cohort}/chr${chr}.dosage noheader format=1 \
-      --covar ../data/input/${cohort}/cov.txt \
-      --fam ../data/input/${cohort}/fam.fam --allow-no-sex \
-      --out ../data/output/${cohort}/chr${chr}
+done
